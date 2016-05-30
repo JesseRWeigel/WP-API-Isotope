@@ -1,0 +1,54 @@
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column; }
+
+main {
+  flex: 1 0 auto; }
+
+header {
+  height: 122px; }
+
+nav {
+  height: 122px; }
+  nav .page-title {
+    line-height: 122px;
+    font-size: 48px;
+    font-weight: 300; }
+
+.card .card-content .card-title {
+  line-height: 30px;
+  margin-bottom: 15px; }
+
+.isotope-item {
+  width: 23%; }
+
+.fourths {
+  width: 23%; }
+
+.halfsies {
+  width: 48%; }
+
+.fullish {
+  width: 98.5%; }
+
+footer.page-footer {
+  margin-top: 0px;
+  padding-top: 0px; }
+
+footer.page-footer .row {
+  margin-bottom: 0px;
+  margin-top: 10px; }
+
+.footer-copyright a {
+  margin-right: 10px; }
+
+footer {
+  margin-top: 0px;
+  padding-top: 0px; }
+  footer .row {
+    margin-bottom: 0px;
+    margin-top: 10px; }
+
+.footer-copyright a {
+  margin-right: 10px; }
