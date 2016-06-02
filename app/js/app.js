@@ -66,16 +66,11 @@ $(function() {
     $.ajax( {
       url: wpURL + 'wp-json/wp/v2/categories?per_page=100',
       success: function ( data ) {
-        categories = data;
 
-        for (i = 0; i < categories.length; i++) {
-          categoryName = categories[i].name;
-          categoryID = categories[i].id;
-          categorySlug = categories[i].slug;
+        $.each(data, function(i, category){
+          $( '.filters' ).append( `<option value=".${category.id}">${category.name}</option>` );
+        });
 
-          $( '.filters' ).append( `<option value=".${categoryID}">${categoryName}</option>` );
-
-       }
          $('select').material_select();
       },
       cache: false
