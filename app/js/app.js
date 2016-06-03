@@ -59,7 +59,7 @@ $(function() {
     }
 
   	var i, t,
-    categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug,
+    categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
     wpURL = 'https://test1.jesseweigel.com/demo/';
 
     // Get Categories
@@ -68,7 +68,7 @@ $(function() {
       success: function ( data ) {
 
         $.each(data, function(i, category){
-          $( '.filters' ).append( `<option value=".${category.id}">${category.name}</option>` );
+          $( '.filters' ).append( `<option value=".${category.id}" catID="${category.id}">${category.name}</option>` );
         });
 
          $('select').material_select();
@@ -98,24 +98,22 @@ $(function() {
       $.ajax( {
         url: wpURL + 'wp-json/wp/v2/posts?per_page=100',
         success: function ( data ) {
-          posts = data;
 
-          for (i = 0; i < posts.length; i++) {
-            postTitle = posts[i].title.rendered;
-            postContent = posts[i].content.rendered;
-            postCatagories = posts[i].categories;
-            postTags = posts[i].tags;
+         $.each(data, function(i, post){
 
-            $( '.isotope-container' ).append( `<div class="card isotope-item ${postCatagories}"><div class="card-content"><div class="card-title" id="post-${i}-title">${postTitle}</div><div class="content" id="post-${i}-content">${postContent}</div></div></div>` );
+           $( '.isotope-container' ).append( `<div class="card isotope-item ${post.categories}"><div class="card-content" post-id=${post.id}><div class="card-title">${post.title.rendered}</div><div class="content">${post.content.rendered}</div></div></div>` );
 
-            for (t = 0; t < postTags.length; t++) {
-              $(`#post-${i}-title`).parent().parent().addClass(`tag-${postTags[t]}`);
-            }
+           //Attach Category names to cards
+           $.each(post.categories, function(i, category){
+             catName = $(`option[catID="${category}"]`).text();
+             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name">${catName}</div>`);
+           });
 
-  	        if (i === posts.length - 1) {
-  	          isotopeize();
-  	        }
-  	     }
+           if (i === data.length - 1) {
+             isotopeize();
+           }
+         });
+
 
         },
         cache: false
