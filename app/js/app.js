@@ -39,6 +39,21 @@ $(function() {
           return false;
       });
 
+      // Category filter
+      $('.cat-name').click(function(){
+
+         var selector = $(this).attr('data-filter');
+          $container.isotope({
+              filter: selector,
+              animationOptions: {
+                  duration: 750,
+                  easing: 'linear',
+                  queue: false
+              }
+          });
+          return false;
+      });
+
       // Tag filter
       $('div.tagFilters').change(function(){
           $('.filters .current').removeClass('current');
@@ -106,7 +121,7 @@ $(function() {
            //Attach Category names to cards
            $.each(post.categories, function(i, category){
              catName = $(`option[catID="${category}"]`).text();
-             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name">${catName}</div>`);
+             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${catName}</div>`);
            });
 
            if (i === data.length - 1) {
