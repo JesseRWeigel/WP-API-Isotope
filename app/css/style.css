@@ -25,6 +25,9 @@ nav {
   .card .cat-name:hover, .card .tag-name:hover {
     cursor: pointer; }
 
+.card .more-link {
+  display: none; }
+
 #tag-container {
   visibility: hidden; }
 

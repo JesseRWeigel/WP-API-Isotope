@@ -1,75 +1,79 @@
 $(function() {
 
+  var $container = $('.isotope-container'),
+  selector;
 
   function isotopeize() {
-      var $container = $('.isotope-container'),
-      selector;
+    $container.isotope({
+      itemSelector: '.card',
+      layoutMode: 'packery',
+      packery: {
+        gutter: 20,
+        isFitWidth: true
+      },
+        filter: '*',
+        animationOptions: {
+            duration: 750,
+            easing: 'linear',
+            queue: false
+        }
+    });
+  }
 
-      $container.isotope({
-        itemSelector: '.card',
-        layoutMode: 'packery',
-        packery: {
-          gutter: 20,
-          isFitWidth: true
-        },
-          filter: '*',
-          animationOptions: {
-              duration: 750,
-              easing: 'linear',
-              queue: false
-          }
-      });
+  function isotopeizeInit() {
 
-      // Category filter (dropdown)
-      $('div.filters').change(function(){
-          $('.filters .current').removeClass('current');
-          $(this).addClass('current');
+    isotopeize();
 
-          selector = $('select').val();
+    // Category filter (dropdown)
+    $('div.filters').change(function(){
+        $('.filters .current').removeClass('current');
+        $(this).addClass('current');
+
+        selector = $('select').val();
 
 
-          $container.isotope({
-              filter: selector,
-              animationOptions: {
-                  duration: 750,
-                  easing: 'linear',
-                  queue: false
-              }
-          });
-          return false;
-      });
+        $container.isotope({
+            filter: selector,
+            animationOptions: {
+                duration: 750,
+                easing: 'linear',
+                queue: false
+            }
+        });
+        return false;
+    });
 
-      // Category filter (in card)
-      $('.cat-name').click(function(){
+    // Category filter (in card)
+    $('.cat-name').click(function(){
 
-         var selector = $(this).attr('data-filter');
-          $container.isotope({
-              filter: selector,
-              animationOptions: {
-                  duration: 750,
-                  easing: 'linear',
-                  queue: false
-              }
-          });
-          return false;
-      });
+       var selector = $(this).attr('data-filter');
+        $container.isotope({
+            filter: selector,
+            animationOptions: {
+                duration: 750,
+                easing: 'linear',
+                queue: false
+            }
+        });
+        return false;
+    });
 
-      // Tag filter (in card)
-      $('.tag-name').click(function(){
+    // Tag filter (in card)
+    $('.tag-name').click(function(){
 
-         var selector = $(this).attr('data-filter');
-          $container.isotope({
-              filter: selector,
-              animationOptions: {
-                  duration: 750,
-                  easing: 'linear',
-                  queue: false
-              }
-          });
-          return false;
-      });
+       var selector = $(this).attr('data-filter');
+        $container.isotope({
+            filter: selector,
+            animationOptions: {
+                duration: 750,
+                easing: 'linear',
+                queue: false
+            }
+        });
+        return false;
+    });
 
-    }
+  }
 
   	var i, t,
     categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
@@ -109,7 +113,7 @@ $(function() {
 
          $.each(data, function(i, post){
 
-           $( '.isotope-container' ).append( `<div class="card isotope-item ${post.categories}"><div class="card-content" post-id=${post.id}><div class="card-title">${post.title.rendered}</div><div class="content">${post.content.rendered}</div></div></div>` );
+           $( '.isotope-container' ).append( `<div class="card isotope-item ${post.categories}"><div class="card-content" post-id=${post.id}><div class="card-title">${post.title.rendered}</div><div class="content">${post.excerpt.rendered}</div></div></div>` );
 
            //Attach Category names to cards
            $.each(post.categories, function(i, category){
@@ -128,7 +132,8 @@ $(function() {
            });
 
            if (i === data.length - 1) {
-             isotopeize();
+             isotopeizeInit();
+             $('#tag-container').remove();
            }
          });
 
