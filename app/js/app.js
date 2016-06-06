@@ -75,6 +75,18 @@ $(function() {
 
   }
 
+  //More button on post cards
+  function expandCard() {
+  $('.expand-card').click(function(){
+
+    $(this).parent().parent().find('.full-content').appendTo('#post-modal .modal-content');
+    $('#post-modal .modal-content h4').text($(this).parent().parent().find('.card-title').text());
+    $('#post-modal .full-content').show();
+    $('#post-modal').openModal();
+    });
+  }
+
+//API Calls
   	var i, t,
     categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
     wpURL = 'https://test1.jesseweigel.com/demo/';
@@ -113,7 +125,17 @@ $(function() {
 
          $.each(data, function(i, post){
 
-           $( '.isotope-container' ).append( `<div class="card isotope-item ${post.categories}"><div class="card-content" post-id=${post.id}><div class="card-title">${post.title.rendered}</div><div class="content">${post.excerpt.rendered}</div></div></div>` );
+           $( '.isotope-container' ).append(
+             `<div class="card isotope-item ${post.categories}">
+                <div class="card-content" post-id=${post.id}>
+                  <div class="card-title">${post.title.rendered}</div>
+                  <div class="content excerpt">${post.excerpt.rendered}</div>
+                  <div class="content full-content">${post.content.rendered}</div>
+                </div>
+                <div class="card-action">
+                  <a class="expand-card">More</a>
+                </div>
+              </div>` );
 
            //Attach Category names to cards
            $.each(post.categories, function(i, category){
@@ -132,8 +154,12 @@ $(function() {
            });
 
            if (i === data.length - 1) {
+             expandCard();
+             $('.full-content').hide();
              isotopeizeInit();
              $('#tag-container').remove();
+
+
            }
          });
 
@@ -143,5 +169,7 @@ $(function() {
       } );
     }
 getPosts();
+
+
 
 });
