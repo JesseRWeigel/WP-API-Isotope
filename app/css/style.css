@@ -20,6 +20,11 @@ nav {
   line-height: 30px;
   margin-bottom: 15px; }
 
+.card .cat-name {
+  color: #cddc39; }
+  .card .cat-name:hover {
+    cursor: pointer; }
+
 .isotope-item {
   width: 23%; }
   @media screen and (max-width: 1300px) {

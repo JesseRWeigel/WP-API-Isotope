@@ -29,6 +29,16 @@ nav {
     line-height: 30px;
     margin-bottom: 15px;
     }
+    // .content {
+    //   max-height:200px;
+    //   overflow: hidden;
+    // }
+  }
+  .cat-name {
+    color: #cddc39;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 
