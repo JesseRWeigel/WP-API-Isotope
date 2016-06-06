@@ -34,12 +34,16 @@ nav {
     //   overflow: hidden;
     // }
   }
-  .cat-name {
+  .cat-name, .tag-name {
     color: #cddc39;
     &:hover {
       cursor: pointer;
     }
   }
+}
+
+#tag-container {
+  visibility: hidden;
 }
 
 .isotope-item {

@@ -20,7 +20,7 @@ $(function() {
           }
       });
 
-      // Category filter
+      // Category filter (dropdown)
       $('div.filters').change(function(){
           $('.filters .current').removeClass('current');
           $(this).addClass('current');
@@ -39,7 +39,7 @@ $(function() {
           return false;
       });
 
-      // Category filter
+      // Category filter (in card)
       $('.cat-name').click(function(){
 
          var selector = $(this).attr('data-filter');
@@ -54,13 +54,10 @@ $(function() {
           return false;
       });
 
-      // Tag filter
-      $('div.tagFilters').change(function(){
-          $('.filters .current').removeClass('current');
-          $(this).addClass('current');
+      // Tag filter (in card)
+      $('.tag-name').click(function(){
 
-          selector = $('select').val();
-
+         var selector = $(this).attr('data-filter');
           $container.isotope({
               filter: selector,
               animationOptions: {
@@ -71,6 +68,7 @@ $(function() {
           });
           return false;
       });
+
     }
 
   	var i, t,
@@ -95,15 +93,10 @@ $(function() {
     $.ajax( {
       url: wpURL + 'wp-json/wp/v2/tags?per_page=100',
       success: function ( data ) {
-        tags = data;
-        tagName = tags[i].name;
-        tagID = tags[i].id;
-        tagSlug = tags[i].slug;
 
-        for (i = 0; i < tags.length; i++) {
-
-
-       }
+        $.each(data, function(i, tag){
+          $('#tag-container').append(`<span tagID="${tag.id}" data-filter=".${tag.id}">${tag.name}</span`);
+        });
       },
       cache: false
     } );
@@ -122,6 +115,16 @@ $(function() {
            $.each(post.categories, function(i, category){
              catName = $(`option[catID="${category}"]`).text();
              $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${catName}</div>`);
+           });
+
+           //Attach Tag names to cards
+           $.each(post.tags, function(i, tag){
+             tagName = $(`#tag-container span[tagid="${tag}"]`).text();
+             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tagName} </span>`);
+
+             //Add tag IDs as classes for filtering
+             $(`div[post-id="${post.id}"]`).parent().addClass(`t${tag}`);
+
            });
 
            if (i === data.length - 1) {

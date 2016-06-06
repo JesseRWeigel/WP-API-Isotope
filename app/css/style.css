@@ -20,10 +20,13 @@ nav {
   line-height: 30px;
   margin-bottom: 15px; }
 
-.card .cat-name {
+.card .cat-name, .card .tag-name {
   color: #cddc39; }
-  .card .cat-name:hover {
+  .card .cat-name:hover, .card .tag-name:hover {
     cursor: pointer; }
+
+#tag-container {
+  visibility: hidden; }
 
 .isotope-item {
   width: 23%; }
