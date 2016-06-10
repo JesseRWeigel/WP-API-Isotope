@@ -16,9 +16,6 @@ nav {
     font-size: 48px;
     font-weight: 300; }
 
-#filter-card .card-content {
-  height: 110px; }
-
 .card .card-content .card-title {
   line-height: 30px;
   margin-bottom: 15px; }

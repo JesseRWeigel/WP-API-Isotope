@@ -118,9 +118,9 @@ $(function() {
     } );
 
     // Get Posts
-    function getPosts(filterOpts='', perPage=100, isotopeInit=true) {
+    function getPosts() {
       $.ajax( {
-        url: `${wpURL}wp-json/wp/v2/posts?${filterOpts}per_page=${perPage}`,
+        url: wpURL + 'wp-json/wp/v2/posts?per_page=100',
         success: function ( data ) {
 
          $.each(data, function(i, post){
@@ -156,14 +156,8 @@ $(function() {
            if (i === data.length - 1) {
              expandCard();
              $('.full-content').hide();
+             isotopeizeInit();
              $('#tag-container').remove();
-             if (isotopeInit === true) {
-              isotopeizeInit();
-
-             } else {
-               $container.isotope('destroy');
-               isotopeizeInit();
-             }
 
 
            }
@@ -174,142 +168,8 @@ $(function() {
         cache: false
       } );
     }
-  getPosts();
+getPosts();
 
 
-
-  //Search input
-  // adapted from https://github.com/bearded-avenger/wp-live-search/blob/master/public/assets/js/wp-live-search.js
-
-
-
-  var postList = $('#post-list'),
-    results = $('#results'),
-    helper = $('#helper'),
-    input = $('#search'),
-    timer;
-
-    $('#close-search').click(function() {
-      input.val('');
-      $(this).removeClass('active');
-      $(this).siblings('label').removeClass('active');
-    });
-
-  $(input).on('keyup keypress', function(e) {
-
-    // clear the previous timer
-		clearTimeout(timer);
-
-    let key = e.which,
-      val = $.trim($(this).val()),
-      valEqual = val == $(this).val(),
-      notEmpty = '' !== val,
-      total = 100,
-      searchURL = `${wpURL}wp-json/wp/v2/posts?filter[s]=${val}&per_page=${total}`;
-
-    // 600ms delay so we dont exectute excessively
-    timer = setTimeout(function(){
-      console.log('timer');
-      // don't proceed if the value is empty or not equal to itself
-				if ( !valEqual && !notEmpty )
-					return false;
-          console.log(val);
-				// what if the user only types two characters?
-				if ( val.length == 2 && !$(helper).length ) {
-          console.log('2chars');
-					// $( input ).after( helperSpan );
-        }
-
-        // if we have more than 3 characters
-        if ( val.length >= 3 || val.length >= 3 && 13 == key ) {
-          //TODO: after the || should be >= 1 maybe? want search to work with less than 3 on enter
-console.log('3chars');
-          // dont run on escape or arrow keys
-					if( blacklistedKeys( key ) )
-						return false;
-
-            //TODO: Add as loader in the html and link classes
-          // // show loader
-					// $( loader ).removeClass('wpls--hide').addClass('wpls--show');
-          // TODO: figure out what the helpers are
-					// // remove any helpers
-					// $( helper ).fadeOut().remove();
-          // TODO: see function below
-					// // remove the close
-					// destroyClose();
-console.log('hi');
-          // make the search request
-          $('.isotope-container').html('');
-          getPosts(`filter[s]=${val}&`, total, false);
-
-          // $.getJSON( searchURL, function( response ) {
-          //
-          //   // remove current list of posts
-          //   $(postList).children().remove();
-          //   $(postList).removeClass('wpls--full').addClass('wpls--empty');
-          //
-          //   // show results
-          //   $(results).parent().removeClass('wpls--hide').addClass('wpls--show');
-          //
-          //   // TODO: add loader to html
-          //   // // hide loader
-          //   // $(loader).removeClass('wpls--show').addClass('wpls--hide');
-          //
-          //   // count results and show
-          //   if ( response.length === 0 ) {
-          //
-          //     // results are empty int
-          //     $(results).text('0').closest( main ).addClass('wpls--no-results');
-          //
-          //     // clear any close buttons
-          //     destroyClose();
-          //
-          //   } else {
-          //
-          //     // again, dont run on escape or arrow keys
-          //     if( blacklistedKeys( key ) )
-          //       return false;
-          //
-          //     // append close button
-          //     if ( !$( clearItem ).length ) {
-          //
-          //       $(input).after( clear );
-          //     }
-          //
-          //     // show how many results we have
-          //     $(results).text( response.length ).closest( main ).removeClass('wpls--no-results');
-          //
-          //     // loop through each object
-          //             $.each( response, function ( i ) {
-          //
-          //                 $(postList).append( itemTemplate( { post: response[i], settings: WP_API_Settings, excerpt: showExcerpt } ) )
-          //                 .removeClass('wpls--empty')
-          //                 .addClass('wpls--full');
-          //
-          //             } );
-          //         }
-          //
-          // });
-
-
-        }
-
-    }, 600);
-
-
-
-  });
-
-
-
-		/**
-		* 	Blacklisted keys - dont allow search on escape or arrow keys
-		*	@since 0.9
-		*/
-		function blacklistedKeys( key ){
-
-			return 27 == key || 37 == key || 38 == key || 39 == key || 40 == key;
-
-		}
 
 });
