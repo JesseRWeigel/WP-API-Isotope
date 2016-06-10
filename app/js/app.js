@@ -91,6 +91,8 @@ $(function() {
     categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
     wpURL = 'https://test1.jesseweigel.com/demo/';
 
+
+
     // Get Categories
     $.ajax( {
       url: wpURL + 'wp-json/wp/v2/categories?per_page=100',
@@ -103,7 +105,7 @@ $(function() {
          $('select').material_select();
       },
       cache: false
-    } );
+    } ).then(
 
     // Get Tags
     $.ajax( {
@@ -115,7 +117,10 @@ $(function() {
         });
       },
       cache: false
-    } );
+    } )
+  ).then(
+    getPosts()
+  );
 
     // Get Posts
     function getPosts(filterOpts='', perPage=100, isotopeInit=true) {
@@ -156,7 +161,7 @@ $(function() {
            if (i === data.length - 1) {
              expandCard();
              $('.full-content').hide();
-             $('#tag-container').remove();
+             
              if (isotopeInit === true) {
               isotopeizeInit();
 
@@ -174,14 +179,12 @@ $(function() {
         cache: false
       } );
     }
-  getPosts();
+
 
 
 
   //Search input
   // adapted from https://github.com/bearded-avenger/wp-live-search/blob/master/public/assets/js/wp-live-search.js
-
-
 
   var postList = $('#post-list'),
     results = $('#results'),
