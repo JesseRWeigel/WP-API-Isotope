@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+var images = {};
 $(function() {
 
   var $container = $('.isotope-container'),
@@ -90,6 +92,7 @@ $(function() {
   	var i, t,
     categories = {},
     tags = {},
+    // images = {},
     posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
     wpURL = 'https://test1.jesseweigel.com/demo/';
 
@@ -130,7 +133,7 @@ $(function() {
       $.ajax( {
         url: `${wpURL}wp-json/wp/v2/posts?${filterOpts}per_page=${perPage}`,
         success: function ( data ) {
-
+          //TODO: Separate out the creation of the dom elements into a another function
          $.each(data, function(i, post){
 
            $( '.isotope-container' ).append(
@@ -152,7 +155,7 @@ $(function() {
 
            //Attach Tag names to cards
            $.each(post.tags, function(i, tag){
-             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tags[tag]} </span>`)
+             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tags[tag]} </span>`);
 
              //Add tag IDs as classes for filtering
              $(`div[post-id="${post.id}"]`).parent().addClass(`t${tag}`);
@@ -181,6 +184,28 @@ $(function() {
       } );
     }
 
+
+    // Get Tags
+    $.ajax({
+      url: wpURL + 'wp-json/wp/v2/media?per_page=100',
+      success: function ( data ) {
+
+        $.each(data, function(i, item){
+          if(item.media_type === "image") {
+            images[item.id] = {
+              thumb: item.media_details.sizes.thumbnail.source_url,
+              medium: item.media_details.sizes.medium.source_url,
+              'medium-large': item.media_details.sizes.medium_large.source_url,
+              large: item.media_details.sizes.large.source_url,
+              'post-thumb': item.media_details.sizes['post-thumbnail'].source_url,
+              full: item.media_details.sizes.full.source_url
+            };
+          }
+
+        });
+      },
+      cache: false
+    });
 
 
 
@@ -246,65 +271,11 @@ console.log('hi');
           $('.isotope-container').html('');
           getPosts(`filter[s]=${val}&`, total, false);
 
-          // $.getJSON( searchURL, function( response ) {
-          //
-          //   // remove current list of posts
-          //   $(postList).children().remove();
-          //   $(postList).removeClass('wpls--full').addClass('wpls--empty');
-          //
-          //   // show results
-          //   $(results).parent().removeClass('wpls--hide').addClass('wpls--show');
-          //
-          //   // TODO: add loader to html
-          //   // // hide loader
-          //   // $(loader).removeClass('wpls--show').addClass('wpls--hide');
-          //
-          //   // count results and show
-          //   if ( response.length === 0 ) {
-          //
-          //     // results are empty int
-          //     $(results).text('0').closest( main ).addClass('wpls--no-results');
-          //
-          //     // clear any close buttons
-          //     destroyClose();
-          //
-          //   } else {
-          //
-          //     // again, dont run on escape or arrow keys
-          //     if( blacklistedKeys( key ) )
-          //       return false;
-          //
-          //     // append close button
-          //     if ( !$( clearItem ).length ) {
-          //
-          //       $(input).after( clear );
-          //     }
-          //
-          //     // show how many results we have
-          //     $(results).text( response.length ).closest( main ).removeClass('wpls--no-results');
-          //
-          //     // loop through each object
-          //             $.each( response, function ( i ) {
-          //
-          //                 $(postList).append( itemTemplate( { post: response[i], settings: WP_API_Settings, excerpt: showExcerpt } ) )
-          //                 .removeClass('wpls--empty')
-          //                 .addClass('wpls--full');
-          //
-          //             } );
-          //         }
-          //
-          // });
-
-
         }
 
     }, 600);
 
-
-
   });
-
-
 
 		/**
 		* 	Blacklisted keys - dont allow search on escape or arrow keys
