@@ -88,7 +88,9 @@ $(function() {
 
 //API Calls
   	var i, t,
-    categories, tags, posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
+    categories = {},
+    tags = {},
+    posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
     wpURL = 'https://test1.jesseweigel.com/demo/';
 
 
@@ -99,6 +101,7 @@ $(function() {
       success: function ( data ) {
 
         $.each(data, function(i, category){
+          categories[category.id] = category.name;
           $( '.filters' ).append( `<option value=".${category.id}" catID="${category.id}">${category.name}</option>` );
         });
 
@@ -113,7 +116,7 @@ $(function() {
       success: function ( data ) {
 
         $.each(data, function(i, tag){
-          $('#tag-container').append(`<span tagID="${tag.id}" data-filter=".${tag.id}">${tag.name}</span`);
+          tags[tag.id] = tag.name;
         });
       },
       cache: false
@@ -144,14 +147,12 @@ $(function() {
 
            //Attach Category names to cards
            $.each(post.categories, function(i, category){
-             catName = $(`option[catID="${category}"]`).text();
-             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${catName}</div>`);
+             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${categories[category]}</div>`);
            });
 
            //Attach Tag names to cards
            $.each(post.tags, function(i, tag){
-             tagName = $(`#tag-container span[tagid="${tag}"]`).text();
-             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tagName} </span>`);
+             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tags[tag]} </span>`)
 
              //Add tag IDs as classes for filtering
              $(`div[post-id="${post.id}"]`).parent().addClass(`t${tag}`);
@@ -161,7 +162,7 @@ $(function() {
            if (i === data.length - 1) {
              expandCard();
              $('.full-content').hide();
-             
+
              if (isotopeInit === true) {
               isotopeizeInit();
 
