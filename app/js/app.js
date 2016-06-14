@@ -1,5 +1,4 @@
 /* jshint esversion: 6 */
-var images = {};
 $(function() {
 
   var $container = $('.isotope-container'),
@@ -89,109 +88,98 @@ $(function() {
   }
 
 //API Calls
-  	var i, t,
-    categories = {},
-    tags = {},
-    // images = {},
-    cardImg,
-    posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
-    wpURL = 'https://test1.jesseweigel.com/demo/';
+	var i, t,
+  categories = {},
+  tags = {},
+  images = {},
+  cardImg,
+  posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
+  wpURL = 'https://test1.jesseweigel.com/demo/';
 
 
+  function get(url) {
+    return fetch(url, {
+      method: 'get'
+    });
+  }
 
-    // Get Categories
-    $.ajax( {
-      url: wpURL + 'wp-json/wp/v2/categories?per_page=100',
-      success: function ( data ) {
+  function getJSON(url) {
+    return get(url).then(function(response) {
+      return response.json();
+    });
+  }
 
-        $.each(data, function(i, category){
-          categories[category.id] = category.name;
-          $( '.filters' ).append( `<option value=".${category.id}" catID="${category.id}">${category.name}</option>` );
-        });
+  //Get Categories
 
-         $('select').material_select();
-      },
-      cache: false
-    } ).then(
+  getJSON(`${wpURL}wp-json/wp/v2/categories?per_page=100`)
+  .then(function(data){
+    $.each(data, function(i, category){
+      categories[category.id] = category.name;
+      $( '.filters' ).append( `<option value=".${category.id}" catID="${category.id}">${category.name}</option>` );
+    });
 
-    // Get Tags
-    $.ajax( {
-      url: wpURL + 'wp-json/wp/v2/tags?per_page=100',
-      success: function ( data ) {
+     $('select').material_select();
+  })
+  .catch(function(error) {
+    console.log(error);
+  })
+  .then(function(data){
+    getJSON(`${wpURL}wp-json/wp/v2/tags?per_page=100`)
+    .then(function(data){
+      $.each(data, function(i, tag){
+        tags[tag.id] = tag.name;
+      });
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+    .then(
+      getImages()
+    )
+    .then(
+      getPosts()
+    );
 
-        $.each(data, function(i, tag){
-          tags[tag.id] = tag.name;
-        });
-      },
-      cache: false
-    } )
-  ).then(
-    getImages()
-  ).then(
-    getPosts()
-  );
+  });
+
+  //   // Get Categories
+  //   $.ajax( {
+  //     url: wpURL + 'wp-json/wp/v2/categories?per_page=100',
+  //     success: function ( data ) {
+  //
+  //       $.each(data, function(i, category){
+  //         categories[category.id] = category.name;
+  //         $( '.filters' ).append( `<option value=".${category.id}" catID="${category.id}">${category.name}</option>` );
+  //       });
+  //
+  //        $('select').material_select();
+  //     },
+  //     cache: false
+  //   } ).then(
+  //
+  //   // Get Tags
+  //   $.ajax( {
+  //     url: wpURL + 'wp-json/wp/v2/tags?per_page=100',
+  //     success: function ( data ) {
+  //
+  //       $.each(data, function(i, tag){
+  //         tags[tag.id] = tag.name;
+  //       });
+  //     },
+  //     cache: false
+  //   } )
+  // ).then(
+  //   getImages()
+  // ).then(
+  //   getPosts()
+  // );
 
     // Get Posts
     function getPosts(filterOpts='', perPage=100, isotopeInit=true) {
       $.ajax( {
         url: `${wpURL}wp-json/wp/v2/posts?${filterOpts}per_page=${perPage}`,
         success: function ( data ) {
-          //TODO: Separate out the creation of the dom elements into a another function
-         $.each(data, function(i, post){
-           console.log (post.featured_media);
-           if(post.featured_media !== 0) {
-             cardImg = images[post.featured_media].thumb;
-           } else {
-             cardImg = 'https://baconmockup.com/300/200';
-           }
-
-           $( '.isotope-container' ).append(
-             `<div class="card isotope-item ${post.categories}">
-                <div class="card-image">
-                  <img src="${cardImg}"/>
-                </div>
-                <div class="card-content" post-id=${post.id}>
-                  <div class="card-title">${post.title.rendered}</div>
-                  <div class="content excerpt">${post.excerpt.rendered}</div>
-                  <div class="content full-content">${post.content.rendered}</div>
-                </div>
-                <div class="card-action">
-                  <a class="expand-card">More</a>
-                </div>
-              </div>` );
-
-           //Attach Category names to cards
-           $.each(post.categories, function(i, category){
-             $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${categories[category]}</div>`);
-           });
-
-           //Attach Tag names to cards
-           $.each(post.tags, function(i, tag){
-             $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tags[tag]} </span>`);
-
-             //Add tag IDs as classes for filtering
-             $(`div[post-id="${post.id}"]`).parent().addClass(`t${tag}`);
-
-           });
-
-           if (i === data.length - 1) {
-
-             expandCard();
-             $('.full-content').hide();
-
-             $('.isotope-container').imagesLoaded(function(){
-               if (isotopeInit === true) {
-                isotopeizeInit();
-
-               } else {
-                 $container.isotope('destroy');
-                 isotopeizeInit();
-               }
-             });
-
-           }
-         });
-
+          renderCards(data);
 
         },
         cache: false
@@ -222,6 +210,63 @@ $(function() {
         cache: false
       });
     }
+
+  function renderCards(data, isotopeInit=true) {
+   $.each(data, function(i, post){
+
+     if(post.featured_media !== 0) {
+       cardImg = images[post.featured_media].thumb;
+     } else {
+       cardImg = 'https://baconmockup.com/300/200';
+     }
+
+     $( '.isotope-container' ).append(
+       `<div class="card isotope-item ${post.categories}">
+          <div class="card-image">
+            <img src="${cardImg}"/>
+          </div>
+          <div class="card-content" post-id=${post.id}>
+            <div class="card-title">${post.title.rendered}</div>
+            <div class="content excerpt">${post.excerpt.rendered}</div>
+            <div class="content full-content">${post.content.rendered}</div>
+          </div>
+          <div class="card-action">
+            <a class="expand-card">More</a>
+          </div>
+        </div>` );
+
+     //Attach Category names to cards
+     $.each(post.categories, function(i, category){
+       $(`div[post-id="${post.id}"] .content`).prepend(`<div class="cat-name" data-filter=".${category}">${categories[category]}</div>`);
+     });
+
+     //Attach Tag names to cards
+     $.each(post.tags, function(i, tag){
+       $(`div[post-id="${post.id}"] .content`).append(`<span class="tag-name" data-filter=".t${tag}">${tags[tag]} </span>`);
+
+       //Add tag IDs as classes for filtering
+       $(`div[post-id="${post.id}"]`).parent().addClass(`t${tag}`);
+
+     });
+
+     if (i === data.length - 1) {
+
+       expandCard();
+       $('.full-content').hide();
+
+       $('.isotope-container').imagesLoaded(function(){
+         if (isotopeInit === true) {
+          isotopeizeInit();
+
+         } else {
+           $container.isotope('destroy');
+           isotopeizeInit();
+         }
+       });
+
+     }
+   });
+ }
 
 
 
