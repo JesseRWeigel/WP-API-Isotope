@@ -100,7 +100,7 @@ $(function() {
   cardImg,
   cardImgTemp,
   posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
-  wpURL = 'https://franciscan.university/fus-bulletin/';
+  wpURL = 'https://test1.jesseweigel.com/demo/';
 
 
   function get(url) {
