@@ -80,12 +80,17 @@ $(function() {
   function expandCard() {
   $('.expand-card').click(function(){
 
-    $(this).parent().parent().find('.full-content').appendTo('#post-modal .modal-content');
     $('#post-modal .modal-content h4').text($(this).parent().parent().find('.card-title').text());
-    $('#post-modal .full-content').show();
+    $('#post-modal .modal-content p').html($(this).parent().parent().find('.full-content').html());
+    $('#post-modal .full-content, #post-modal .tag-name').show();
     $('#post-modal').openModal();
     });
   }
+
+//   //On modal close
+// $('.modal-close').click(function(){
+//
+// });
 
 //API Calls
 	var i, t,
@@ -93,8 +98,9 @@ $(function() {
   tags = {},
   images = {},
   cardImg,
+  cardImgTemp,
   posts, postTitle, postContent, postCatagories, postTags, categoryName, categoryID, categorySlug, tagName, tagID, tagSlug, catName,
-  wpURL = 'https://test1.jesseweigel.com/demo/';
+  wpURL = 'https://franciscan.university/fus-bulletin/';
 
 
   function get(url) {
@@ -196,11 +202,11 @@ $(function() {
           $.each(data, function(i, item){
             if(item.media_type === "image") {
               images[item.id] = {
-                thumb: item.media_details.sizes.thumbnail.source_url,
+              //  thumb: item.media_details.sizes.thumbnail.source_url,
                 medium: item.media_details.sizes.medium.source_url,
                 'medium-large': item.media_details.sizes.medium_large.source_url,
                 large: item.media_details.sizes.large.source_url,
-                'post-thumb': item.media_details.sizes['post-thumbnail'].source_url,
+                // 'post-thumb': item.media_details.sizes['post-thumbnail'].source_url,
                 full: item.media_details.sizes.full.source_url
               };
             }
@@ -215,16 +221,17 @@ $(function() {
    $.each(data, function(i, post){
 
      if(post.featured_media !== 0) {
-       cardImg = images[post.featured_media].thumb;
+       cardImg = images[post.featured_media].large;
+       cardImgTemp = `<div class="card-image">
+                           <img src="${cardImg}"/>
+                         </div>`;
      } else {
-       cardImg = 'https://baconmockup.com/300/200';
+       cardImgTemp = '';
      }
 
      $( '.isotope-container' ).append(
        `<div class="card isotope-item ${post.categories}">
-          <div class="card-image">
-            <img src="${cardImg}"/>
-          </div>
+          ${cardImgTemp}
           <div class="card-content" post-id=${post.id}>
             <div class="card-title">${post.title.rendered}</div>
             <div class="content excerpt">${post.excerpt.rendered}</div>
@@ -253,6 +260,7 @@ $(function() {
 
        expandCard();
        $('.full-content').hide();
+       $('.tag-name').hide();
 
        $('.isotope-container').imagesLoaded(function(){
          if (isotopeInit === true) {
